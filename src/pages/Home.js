@@ -5,6 +5,7 @@ import axios from 'axios'
 import '../css/bootstrap.css'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import Loading from '../components/Loading'
 
 
 const scrollTop = () => {
@@ -17,18 +18,26 @@ const Home = () => {
   const inputBookName = useRef(null);
   const [books, setBooks] = useState([])
   const [bookName, setBookName] = useState('reactjs') 
+  const [loading,setLoading] = useState(false)
   
   useEffect(() => {
-
     scrollTop() 
+    setLoading(true)
 
     axios.get(`https://www.googleapis.com/books/v1/volumes?q=${bookName}`)
-        .then(response => setBooks(response.data['items'].filter(e => (typeof e.volumeInfo.imageLinks !== 'undefined' && typeof e.volumeInfo.description !== 'undefined'))))    
+        .then(response => setBooks(response.data['items'].filter(e => (typeof e.volumeInfo.imageLinks !== 'undefined' && typeof e.volumeInfo.description !== 'undefined'))))      
       },[bookName])
+
+  useEffect(() => {
+    setLoading(false)
+  }, [books])    
 
   return (
     <div>
       <Header inputBookName={inputBookName} setBookName={setBookName}/> 
+      <Loading
+          loading={loading}
+        />
         <div className="container" style={{paddingTop:"100px"}}>
           {    
             books.map(item => (
